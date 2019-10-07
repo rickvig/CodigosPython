@@ -24,24 +24,32 @@ for item in inbox_item_list:
     subject_ = email_message['Subject']
     date_ = email_message['date']
     counter = 1
+    
     for part in email_message.walk():
+        
         if part.get_content_maintype() == "multipart":
             continue
         filename = part.get_filename()
         content_type = part.get_content_type()
+        
         if not filename:
             ext = mimetypes.guess_extension(content_type)
+            
             if not ext:
                 ext = '.bin'
+            
             if 'text' in content_type:
                 ext = '.txt'
             elif 'html' in content_type:
                 ext = '.html'
             filename = 'msg-part-%08d%s' %(counter, ext)
+        
         counter += 1
+    
     save_path = os.path.join(dirOpa, subject_)
     #if not os.path.exists(save_path):
      #   os.makedirs(save_path)
+    
     with open(os.path.join(save_path, filename), 'wb') as fp:
         fp.write(part.get_payload(decode=True))
 
